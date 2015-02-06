@@ -4,6 +4,8 @@ require_once MODX_CORE_PATH . '/components/billing/processors/web/orders/submit.
 
 class modBasketWebOrdersSubmitProcessor extends modWebOrdersSubmitProcessor{
     
+    protected $password='';
+    
     /*
         Если на сайте нет авторизации, то имеет смысл разрешить приобщение заказов
         к существуюим пользователям с поиском по емейлу.
@@ -181,9 +183,11 @@ class modBasketWebOrdersSubmitProcessor extends modWebOrdersSubmitProcessor{
         ));
         
         // Создаем объект пользователя
+        $this->password=substr(md5(time()),0,8);
         $contractor = $this->modx->newObject('modUser', array(
             'active' => 1,
             'username' => $email,
+            'password' => $this->password,
         ));
         
         // Создаем профиль пользователя
@@ -217,6 +221,7 @@ class modBasketWebOrdersSubmitProcessor extends modWebOrdersSubmitProcessor{
     */
     protected function sendNotification(){ 
         // Набиваем данные в шаблонизатор
+        $this->properties['password']=$this->password;
         $this->modx->smarty->assign('order', $this->object->toArray());
         $this->modx->smarty->assign('properties', $this->getProperties());
         
