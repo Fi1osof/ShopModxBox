@@ -26,8 +26,12 @@ class modWebCatalogCategoryGetdataProcessor extends modWebResourcesGetdataProces
         $c = parent::prepareQueryBeforeCount($c);
          
         $categories = array();
+        $res = $this->getCategories((int)$this->getProperty('category_id'), $categories);
+        if(empty($res))
+            $res=array(0);
+
         $where = array(
-            'id:in'    => $this->getCategories((int)$this->getProperty('category_id'), $categories),
+            'id:in'    => $res,
         );
         
         $c->where($where);
